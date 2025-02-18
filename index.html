@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>แผนที่ OpenStreetMap</title>
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+</head>
+<body>
+
+<div id="map" style="height: 400px;"></div>
+
+<script>
+  const map = L.map('map').setView([16.8725173, 99.1322329], 10);
+
+  L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+    attribution: 'Map data &copy; <a href="https://www.openstreetmap.org/">OpenStreetMap</a> contributors'
+  }).addTo(map);
+
+  let markers = []; // สร้างตัวแปรสำหรับเก็บมาร์กเกอร์
+
+  function updateMarkers(data) {
+    // ... (ส่วนการลบมาร์กเกอร์เก่าเหมือนเดิม)
+
+    data.forEach(item => {
+      const marker = L.marker([item.ละติจูด, item.ลองจิจูด]).addTo(map);
+      marker.bindPopup(item.ชื่อ + " " + item.นามสกุล + "<br>โรคประจำตัว: " + item.โรคประจำตัว); // แก้ไขที่นี่
+      markers.push(marker);
+      
+      
+    });
+  }
+
+  function fetchData() {
+    const scriptUrl = 'https://script.google.com/macros/s/AKfycbwG2tXe8pT-PtVRiFPygktiFUmHaDNjpX8VLNZsb7oDBCPYLCQg4coukHZfjDAXc6M-/exec'; // แทนที่ YOUR_APPS_SCRIPT_ID ด้วย ID จริง
+    fetch(scriptUrl)
+      .then(response => response.json())
+      .then(data => updateMarkers(data))
+      .catch(error => console.error('Error fetching data:', error));
+  }
+
+  fetchData();
+  setInterval(fetchData, 5000);
+</script>
+
+</body>
+</html>
